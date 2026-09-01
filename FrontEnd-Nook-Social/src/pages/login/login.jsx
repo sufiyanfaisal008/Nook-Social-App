@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { AiOutlineAlipayCircle } from "react-icons/ai";
 import { Link, useNavigate } from 'react-router-dom';
 import { message } from 'antd';
@@ -6,8 +6,11 @@ import axios from 'axios';
 import Password from '../../component/password';
 import './login.scss';
 import { baseURL } from '../../core';
+import { store } from '../../store/states';
 
 function Login() {
+  
+    const { globalLogin, globallogout, user, islogin } = store()
   const navigate = useNavigate()
 
   const [email, set_email] = useState('');
@@ -35,9 +38,10 @@ function Login() {
       })
 
       message.success('Login Successfully...');
+      localStorage.setItem("token" , response.data.data.token)
 
-      console.log(response)
-      // navigate('/')
+      globalLogin(response.data.data.user)
+      navigate('/')
 
       set_email('');
       set_password('');

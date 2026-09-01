@@ -1,6 +1,8 @@
 import express from 'express'
 import { UserModel } from '../../models/user/index.mjs'
 import bcrypt from 'bcryptjs'
+import { multerMiddleware } from '../../libs/multer.mjs'
+import { uploadToCloudinary } from '../../libs/cloudnary.mjs'
 
 const router = express.Router()
 
@@ -54,6 +56,7 @@ router.put('/profile', async (req, res, next) => {
     })
   }
 })
+
 router.put('/password', async (req, res, next) => {
   try {
     const currentPassword = req.body.currentPassword;
@@ -86,5 +89,54 @@ router.put('/password', async (req, res, next) => {
     });
   }
 });
+
+// profile picture upload
+router.put("/profile-picture", multerMiddleware.any(), async (req, res, next) => {
+  try {
+    const file = req.files[0]
+
+    const isImageMime = file?.mimetype?.startsWith("image/");
+    const isImageExt = file?.originalname?.match(/\.(jpg|jpeg|png|gif|webp|jfif|heic)$/i);
+    
+        if (!file) {
+          return res.status(400).send({
+            message: "image file is required"
+          })
+        }
+
+    if (!isImageMime && !isImageExt) {
+      return res.status(400).send({
+        message: "only images are allowed"
+      });
+    }
+
+
+    if (file.size > 1000000) {
+      return res.status(400).send({
+        message: "file size should be less than 1MB"
+      })
+    }
+
+    const fileRespUpload = await uploadToCloudinary(file)
+    // console.log(fileRespUpload)
+
+    await UserModel.findByIdAndUpdate({ _id: req.currentUser._id }, {
+      $set: {
+        profilePicture: fileRespUpload.secure_url
+      }
+    })
+
+    return res.send({
+      message: "profile picture updated",
+      url: fileRespUpload.secure_url
+    })
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({
+      message: "internal server error"
+    })
+  }
+})
 
 export default router;

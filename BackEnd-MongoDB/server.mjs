@@ -14,17 +14,18 @@ app.use(cors({
     methods: '*'
 }))
 
-
 app.get('/', (req, res, next) => {
     res.send({
         message: 'Runing Server...'
     })
 })
 
-app.use('/api/v1', authRoutes)
-app.use('/api/v1', authGurdJWT)
-app.use('/api/v1', postRout)
-app.use('/api/v1', profileRout)
+app.use('/api/v1',
+    authRoutes,
+    authGurdJWT,
+    postRout,
+    profileRout
+)
 
 app.listen(port, () => {
     console.log("Server Runing")

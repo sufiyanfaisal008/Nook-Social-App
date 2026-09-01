@@ -131,7 +131,10 @@ router.post("/login", async (req, res, next) => {
 
         return res.send({
             message: 'Login Successfully',
-            data: token
+            data: {
+                token: token,
+                user: userAcount
+            }
         })
     } catch (error) {
         console.error(error)

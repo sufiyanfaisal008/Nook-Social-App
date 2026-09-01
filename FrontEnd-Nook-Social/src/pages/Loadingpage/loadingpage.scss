@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+$bg-gradient: radial-gradient(circle at top left, #2b0b14, #0f0508 60%, #050203);
+$accent-red: #ff4d6d;
+$accent-glow: rgba(255, 77, 109, 0.4);
+$text-main: #fff0f3;
+$text-muted: #c9a0a8;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+@keyframes pulseScale {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 15px $accent-glow);
+  }
+  50% {
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 30px rgba(255, 77, 109, 0.7));
+  }
+}
+
+@keyframes ringExpand {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes progressShift {
+  0% {
+    left: -40%;
+    width: 30%;
+  }
+  50% {
+    width: 60%;
+  }
+  100% {
+    left: 110%;
+    width: 30%;
+  }
+}
+
+.loading-container {
+  min-height: 100vh;
+  width: 100%;
+  background: $bg-gradient;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 77, 109, 0.2) 0%, rgba(0,0,0,0) 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+
+    .logo-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.2rem;
+
+      .pulse-logo {
+        color: $accent-red;
+        font-size: 4.5rem;
+        animation: pulseScale 2.5s infinite ease-in-out;
+        z-index: 2;
+      }
+
+      .glow-ring {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        border: 2px solid $accent-red;
+        border-radius: 50%;
+        animation: ringExpand 2.5s infinite ease-out;
+      }
+    }
+
+    .brand-name {
+      color: $text-main;
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 15px rgba(255, 77, 109, 0.3);
+    }
+
+    .spinner-bar {
+      width: 180px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255, 77, 109, 0.15);
+
+      .spinner-progress {
+        position: absolute;
+        height: 100%;
+        background: linear-gradient(90deg, #ff4d6d, #ff758f);
+        border-radius: 10px;
+        box-shadow: 0 0 10px $accent-glow;
+        animation: progressShift 1.6s infinite ease-in-out;
+      }
+    }
+
+    .loading-text {
+      color: $text-muted;
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .loading-container {
+    .loading-content {
+      .logo-wrapper .pulse-logo {
+        font-size: 3.5rem;
+      }
+
+      .spinner-bar {
+        width: 140px;
+        height: 3px;
+      }
+
+      .loading-text {
+        font-size: 0.8rem;
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ import { UserModel } from '../../models/user/index.mjs'
 // bariale
 export const authGurdJWT = async (req, res, next) => {
     try {
-        console.log("runing midlware")
+        // console.log("runing midlware")
 
         const token = req.headers.token
         // console.log("token===>", token)
