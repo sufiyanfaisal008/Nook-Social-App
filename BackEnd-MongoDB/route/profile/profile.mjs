@@ -1,12 +1,13 @@
 import express from 'express'
 import { UserModel } from '../../models/user/index.mjs'
+import { postmodel } from '../../models/post/post.mjs'
 import bcrypt from 'bcryptjs'
 import { multerMiddleware } from '../../libs/multer.mjs'
 import { uploadToCloudinary } from '../../libs/cloudnary.mjs'
 
 const router = express.Router()
 
-router.get('/profile', async (req, res, next) => {
+router.get("/profile", async (req, res, next) => {
   try {
 
     return res.send({
@@ -21,6 +22,51 @@ router.get('/profile', async (req, res, next) => {
     })
   }
 })
+
+router.get("/profile/:userId", async (req, res, next) => {
+  try {
+    
+    const userId = req.params.userId || req.currentUser.userId
+
+    const alluser = await UserModel.findOne({ _id: userId })
+
+
+    return res.send({
+      message: 'Profile Fetched',
+      data: alluser
+    })
+
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send({
+      message: "internal server error"
+    })
+  }
+})
+
+router.get("/profile/posts/:userId", async (req, res) => {
+  try {
+   
+    const userId = req.params.userId || req.currentUser.userId
+
+    const allpost = await postmodel.find({ userId: userId })
+
+    if (!allpost) {
+      return res.status(404).send({
+        message: 'User not found'
+      });
+    }
+
+    return res.status(200).send({
+      message: 'Profile posts fetched successfully',
+      data: allpost
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ message: "Internal server error" });
+  }
+});
+
 
 router.put('/profile', async (req, res, next) => {
   try {
@@ -97,12 +143,12 @@ router.put("/profile-picture", multerMiddleware.any(), async (req, res, next) =>
 
     const isImageMime = file?.mimetype?.startsWith("image/");
     const isImageExt = file?.originalname?.match(/\.(jpg|jpeg|png|gif|webp|jfif|heic)$/i);
-    
-        if (!file) {
-          return res.status(400).send({
-            message: "image file is required"
-          })
-        }
+
+    if (!file) {
+      return res.status(400).send({
+        message: "image file is required"
+      })
+    }
 
     if (!isImageMime && !isImageExt) {
       return res.status(400).send({
@@ -138,5 +184,22 @@ router.put("/profile-picture", multerMiddleware.any(), async (req, res, next) =>
     })
   }
 })
+
+router.put('/email', async (req, res, next) => {
+  try {
+    const email = req.body.email
+
+    return res.send({
+      message: 'Email Update Successfully',
+    })
+
+  } catch (error) {
+    console.error(error)
+    return res.status(500).send({
+      message: "internal server error"
+    })
+  }
+})
+
 
 export default router;

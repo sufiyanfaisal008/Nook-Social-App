@@ -2,9 +2,9 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import Post from './pages/post/post'
 import Login from './pages/login/login'
 import Signup from './pages/signup/signup'
+import OTP from './pages/OTP/otp'
 import axios from 'axios'
 import { message } from 'antd'
-import './App.css'
 import { baseURL } from './core'
 import { useEffect } from 'react'
 import { store } from './store/states'
@@ -14,7 +14,7 @@ import Profile from './pages/profile/profile'
 function App() {
   const { globalLogin, globalLogout, user, islogin } = store()
 
-  console.log({ user, islogin })
+  // console.log({ user, islogin })
 
   useEffect(() => {
     get_profile()
@@ -30,7 +30,7 @@ function App() {
     try {
       const response = await axios.get(`${baseURL}/api/v1/profile`, {
         headers: {
-          token: token
+          token: localStorage.getItem('token') 
         }
       })
       // console.log(response.data.data)
@@ -50,6 +50,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Post />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:userId" element={<Profile />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       ) : null}
@@ -58,6 +59,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/varify-email" element={<OTP />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       ) : null}

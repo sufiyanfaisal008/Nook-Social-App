@@ -10,9 +10,11 @@ import { authGurdJWT } from "./midleware/jwt/jwt.mjs"
 app.use(express.json())
 
 app.use(cors({
-    origin: "*",
-    methods: '*'
-}))
+  origin: 'http://localhost:5173',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'token']
+}));
 
 app.get('/', (req, res, next) => {
     res.send({
